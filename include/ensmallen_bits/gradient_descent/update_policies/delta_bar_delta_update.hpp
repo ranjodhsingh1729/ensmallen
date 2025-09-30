@@ -96,6 +96,8 @@ class DeltaBarDeltaUpdate
   class Policy
   {
    public:
+    // typedef typename MatType::elem_type ElemType;
+
     /**
      * This is called by the optimizer method before the start of the iteration
      * update process.
@@ -123,11 +125,14 @@ class DeltaBarDeltaUpdate
                 const double stepSize,
                 const GradType& gradient)
     {
-      gains.elem(arma::find((velocity % gradient) < 0.0)) += parent.Kappa();
-      gains.elem(arma::find((velocity % gradient) > 0.0)) *= parent.Phi();
+      const MatType mask = conv_to<MatType>::from((gradient % velocity) < 0.0);
+      
+      gains += mask * parent.Kappa();
+      gains %= mask + (1 - mask) *  parent.Phi();
       gains.clamp(parent.MinimumGain(), arma::datum::inf);
 
-      velocity = parent.momentum * velocity - (stepSize * gains) % gradient;
+      velocity *= parent.momentum;
+      velocity -= (stepSize * gains) % gradient;
       iterate += velocity;
     }
 
