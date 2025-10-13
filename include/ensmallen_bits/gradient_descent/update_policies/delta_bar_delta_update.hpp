@@ -109,9 +109,8 @@ class DeltaBarDeltaUpdate
     Policy(const DeltaBarDeltaUpdate& parent,
            const size_t rows,
            const size_t cols)
-        : parent(parent)
+        : parent(parent), velocity(rows, cols)
     {
-      velocity.zeros(rows, cols);
       gains.ones(rows, cols);
     }
 
