@@ -22,18 +22,18 @@ namespace ens {
  *
  * According to the Delta-Bar-Delta update:
  *
- * - If the current derivative of a weight and the exponential moving average
- *   of its previous derivatives have the same sign, then the learning rate
- *   for that weight is incremented by a constant \f$\kappa\f$.
+ * - If the current gradient and the exponential moving average of
+ *   previous gradients corresponding to a parameter have the same
+ *   sign, then the learning rate for that parameter is incremented by
+ *   \f$\kappa\f$. Otherwise, it is multiplied by \f$\phi\f$ (additive
+ *   increase, multiplicative decrease).
  *
- * - If the current derivative of a weight and the exponential moving average
- *   of its previous derivatives have the opposite signs, then the learning
- *   rate for that weight is decremented by a proportion \f$\phi\f$ of its
- *   current value.
- *
- * @note This implementation introduces a MinimumGain parameter to ensure
- *     that repeated proportional decrements do not reduce the learning rate
- *     all the way to zero. This is not present in the paper given below.
+ * @note This implementation uses a MinimumGain parameter to set a lower
+ *     bound for the learning rate. This prevents the learing rate from
+ *     droping to zero, which can occur due to floating-point underflow.
+ *     For tasks which require extreme fine-tuning, you may need to lower
+ *     this parameter than its default value(0.01) in order to allow for 
+ *     smaller learing rates.
  *
  * @code
  * @article{jacobs1988increased,
@@ -109,8 +109,9 @@ class DeltaBarDeltaUpdate
     Policy(const DeltaBarDeltaUpdate& parent,
            const size_t rows,
            const size_t cols)
-        : parent(parent), velocity(rows, cols)
+        : parent(parent)
     {
+      velocity.zeros(rows, cols);
       gains.ones(rows, cols);
     }
 
