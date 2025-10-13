@@ -1,5 +1,11 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+* Refactor `GradientDescent` into
+  `GradientDescentType<UpdatePolicyType, DecayPolicyType>`.
+  Add the `DeltaBarDelta` optimizer, which implements Jacob's delta-bar-delta
+  update through `GradientDescentType` with `DeltaBarDeltaUpdate` and `NoDecay`
+  policies. ([#440](https://github.com/mlpack/ensmallen/pull/440))
+  See the documentation for more details.
 
 ### ensmallen 3.10.0: "Unexpected Rain"
 ###### 2025-09-25
@@ -44,6 +50,7 @@
     ActiveCMAES<FullSelection, BoundaryBoxConstraint> opt(lambda,
         BoundaryBoxConstraint(lowerBound, upperBound), ...);
     ```
+
  * Add proximal gradient optimizers for L1-constrained and other related
    problems: `FBS`, `FISTA`, and `FASTA`
    ([#427](https://github.com/mlpack/ensmallen/pull/427)).  See the
