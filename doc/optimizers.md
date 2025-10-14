@@ -1263,11 +1263,10 @@ optimizer.Optimize(f, coordinates);
 
 *An optimizer for [differentiable functions](#differentiable-functions).*
 
-Gradient Descent is a technique to minimize a function. This is a Gradient
-Descent variant that adapts learning rates for each parameter for better
-convergence rates. DeltaBarDelta adjusts a weight’s learning rate by increasing
-it by a fixed amount when the current slope aligns with the exponential average 
-of past slopes, and decreasing it by a proportion when it opposes them.
+A Gradient Descent variant that adapts learning rates for each parameter
+to improve convergence. The rate is increased additively when the current
+gradient's sign is consistent with its exponential moving average, and
+decreased multiplicatively when the signs are opposed.
 
 #### Constructors
 
