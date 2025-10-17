@@ -30,7 +30,7 @@ GradientDescentType<UpdatePolicyType, DecayPolicyType>::GradientDescentType(
     const bool resetPolicy)
     : stepSize(stepSize), maxIterations(maxIterations), tolerance(tolerance),
       updatePolicy(updatePolicy), decayPolicy(decayPolicy),
-      resetPolicy(resetPolicy)
+      resetPolicy(resetPolicy), isInitialized(false)
 { /* Nothing to do. */ }
 
 template <typename UpdatePolicyType, typename DecayPolicyType>
