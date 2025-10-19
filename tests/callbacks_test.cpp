@@ -375,7 +375,7 @@ TEST_CASE("FTMLCallbacksFullFunctionTest", "[CallbacksTest]")
 TEST_CASE("GradientDescentCallbacksFullFunctionTest", "[CallbacksTest]")
 {
   GradientDescent optimizer(0.001, 3, 1e-15);
-  CallbacksFullFunctionTest(optimizer, true, true, false, false, true, true,
+  CallbacksFullFunctionTest(optimizer, true, true, true, true, true, true,
       false, false, true);
 }
 

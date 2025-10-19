@@ -69,10 +69,21 @@ GradientDescent::Optimize(FunctionType& function,
   Callback::BeginOptimization(*this, f, iterate, callbacks...);
   for (size_t i = 1; i != maxIterations && !terminate; ++i)
   {
+    terminate |= Callback::BeginEpoch(*this, f, iterate, i,
+      overallObjective, callbacks...);
+
     overallObjective = f.EvaluateWithGradient(iterate, gradient);
 
     terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
         overallObjective, gradient, callbacks...);
+
+    // And update the iterate.
+    iterate -= ElemType(stepSize) * gradient;
+
+    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
+
+    terminate |= Callback::EndEpoch(*this, f, iterate, i,
+        overallObjective, callbacks...);
 
     // Output current objective function.
     Info << "Gradient Descent: iteration " << i << ", objective "
@@ -99,14 +110,11 @@ GradientDescent::Optimize(FunctionType& function,
 
     // Reset the counter variables.
     lastObjective = overallObjective;
-
-    // And update the iterate.
-    iterate -= ElemType(stepSize) * gradient;
-    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
   }
 
-  Info << "Gradient Descent: maximum iterations (" << maxIterations
-      << ") reached; " << "terminating optimization." << std::endl;
+  if (!terminate)
+    Info << "Gradient Descent: maximum iterations (" << maxIterations
+        << ") reached; " << "terminating optimization." << std::endl;
 
   Callback::EndOptimization(*this, f, iterate, callbacks...);
   return overallObjective;
