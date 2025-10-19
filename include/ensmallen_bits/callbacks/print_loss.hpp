@@ -12,6 +12,8 @@
 #ifndef ENSMALLEN_CALLBACKS_PRINT_LOSS_HPP
 #define ENSMALLEN_CALLBACKS_PRINT_LOSS_HPP
 
+#include <stdexcept>
+
 namespace ens {
 
 /**
@@ -25,8 +27,14 @@ class PrintLoss
    *
    * @param ostream Ostream which receives output from this object.
    */
-  PrintLoss(std::ostream& output = arma::get_cout_stream()) : output(output)
-  { /* Nothing to do here. */ }
+  PrintLoss(std::ostream& output = arma::get_cout_stream(),
+            const size_t printInterval = 1)
+      : output(output), printInterval(printInterval)
+  {
+    if (printInterval == 0)
+      throw std::invalid_argument(
+          "PrintLoss(): printInterval cannot be zero.");
+  }
 
   /**
    * Callback function called at the end of a pass over the data.
@@ -41,16 +49,20 @@ class PrintLoss
   bool EndEpoch(OptimizerType& /* optimizer */,
                 FunctionType& /* function */,
                 const MatType& /* coordinates */,
-                const size_t /* epoch */,
+                const size_t epoch,
                 const double objective)
   {
-    output << objective << std::endl;
+    // epochs are 1-indexed.
+    if (epoch % printInterval == 0)
+      output << objective << std::endl;
     return false;
   }
 
  private:
   //! The output stream that all data is to be sent to; example: std::cout.
   std::ostream& output;
+  //! The number of iterations in between each print.
+  const size_t printInterval;
 };
 
 } // namespace ens
