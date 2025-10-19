@@ -249,12 +249,14 @@ Callback that prints loss to stdout or a specified output stream.
 
  * `PrintLoss()`
  * `PrintLoss(`_`output`_`)`
+ * `PrintLoss(`_`output, printInterval`_`)`
 
 #### Attributes
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
 | `std::ostream` | **`output`** | Ostream which receives output from this object. | `stdout` |
+| `size_t` | **`printInterval`** | The number of epochs between consecutive loss prints. | `1` |
 
 #### Examples:
 

@@ -61,7 +61,7 @@ class PrintLoss
  private:
   //! The output stream that all data is to be sent to; example: std::cout.
   std::ostream& output;
-  //! The number of iterations in between each print.
+  //! The number of epochs between consecutive loss prints.
   const size_t printInterval;
 };
 
