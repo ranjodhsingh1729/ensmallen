@@ -13,6 +13,7 @@
 #define ENSMALLEN_CALLBACKS_PROGRESS_BAR_HPP
 
 #include <ensmallen_bits/function.hpp>
+#include <ensmallen_bits/function/traits.hpp>
 
 namespace ens {
 
@@ -56,33 +57,16 @@ class ProgressBar
                          FunctionType& function,
                          MatType& /* coordinates */)
   {
-    static_assert(traits::HasBatchSizeSignature<
-      OptimizerType>::value,
-      "The OptimizerType does not have a correct definition of BatchSize(). "
-      "Please check that the OptimizerType fully satisfies the requirements "
-      "of the ProgressBar API; see the callbacks documentation for more "
-      "details.");
+    numFunctions = NumFunctions(function);
+    batchSize = BatchSize(optimizer, function);
+    maxIterations = MaxIterations(optimizer);
 
-    static_assert(traits::HasMaxIterationsSignature<
-      OptimizerType>::value,
-      "The OptimizerType does not have a correct definition of MaxIterations()."
-      " Please check that the OptimizerType fully satisfies the requirements "
-      "of the ProgressBar API; see the callbacks documentation for more "
-      "details.");
-
-    static_assert(traits::HasNumFunctionsSignature<
-      FunctionType>::value,
-      "The OptimizerType does not have a correct definition of NumFunctions(). "
-      "Please check that the OptimizerType fully satisfies the requirements "
-      "of the ProgressBar API; see the callbacks documentation for more "
-      "details.");
-
-    epochSize = function.NumFunctions() / optimizer.BatchSize();
-    if (function.NumFunctions() % optimizer.BatchSize() > 0)
+    epochSize = numFunctions / batchSize;
+    if (numFunctions % batchSize > 0)
       epochSize++;
 
-    epochs = optimizer.MaxIterations() / function.NumFunctions();
-    if (optimizer.MaxIterations() % function.NumFunctions() > 0)
+    epochs = maxIterations / numFunctions;
+    if (maxIterations % numFunctions > 0)
       epochs++;
 
     stepTimer.tic();
@@ -183,7 +167,7 @@ class ProgressBar
                 const MatType& /* coordinates */,
                 const double objectiveIn)
   {
-    objective += objectiveIn / optimizer.BatchSize();
+    objective += objectiveIn / batchSize;
     steps++;
     return false;
   }
@@ -229,6 +213,54 @@ class ProgressBar
     return false;
   }
 
+  template <typename FunctionType>
+  typename std::enable_if<
+      traits::HasNumFunctionsSignature<FunctionType>::value, size_t>::type
+  NumFunctions(FunctionType& function)
+  {
+    return function.NumFunctions();
+  }
+
+  template <typename FunctionType>
+  typename std::enable_if<
+      !traits::HasNumFunctionsSignature<FunctionType>::value, size_t>::type
+  NumFunctions(FunctionType& function)
+  {
+    return 1;
+  }
+
+  template <typename OptimizerType, typename FunctionType>
+  typename std::enable_if<
+      traits::HasBatchSizeSignature<OptimizerType>::value, size_t>::type
+  BatchSize(OptimizerType& optimizer, FunctionType& function)
+  {
+    return optimizer.BatchSize();
+  }
+
+  template <typename OptimizerType, typename FunctionType>
+  typename std::enable_if<
+      !traits::HasBatchSizeSignature<OptimizerType>::value, size_t>::type
+  BatchSize(OptimizerType& optimizer, FunctionType& function)
+  {
+    return NumFunctions(function);
+  }
+
+  template <typename OptimizerType>
+  typename std::enable_if<
+      traits::HasMaxIterationsSignature<OptimizerType>::value, size_t>::type
+  MaxIterations(OptimizerType& optimizer)
+  {
+    return optimizer.MaxIterations();
+  }
+
+  template <typename OptimizerType>
+  typename std::enable_if<
+      !traits::HasMaxIterationsSignature<OptimizerType>::value, size_t>::type
+  MaxIterations(OptimizerType& optimizer)
+  {
+    return 0;
+  }
+
  private:
   //! Length of a single step (1%).
   double width;
@@ -262,6 +294,15 @@ class ProgressBar
 
   //! Locally-stored epoch timer object.
   arma::wall_clock epochTimer;
+
+  //! Locally-stored number of functions.
+  size_t numFunctions;
+
+  //! Locally-stored maximum iterations.
+  size_t maxIterations;
+
+  //! Locally-stored batch size.
+  size_t batchSize;
 };
 
 } // namespace ens
