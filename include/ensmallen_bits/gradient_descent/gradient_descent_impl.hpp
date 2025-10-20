@@ -65,13 +65,12 @@ GradientDescent::Optimize(FunctionType& function,
   // Controls early termination of the optimization process.
   bool terminate = false;
 
-  // actualMaxIterations (0 means no limit)
   const size_t actualMaxIterations = (maxIterations == 0) ?
       std::numeric_limits<size_t>::max() : maxIterations;
 
   // Now iterate!
   Callback::BeginOptimization(*this, f, iterate, callbacks...);
-  for (size_t i = 1; i <= actualMaxIterations && !terminate; ++i)
+  for (size_t i = 0; i < actualMaxIterations && !terminate; ++i)
   {
     overallObjective = f.EvaluateWithGradient(iterate, gradient);
 
