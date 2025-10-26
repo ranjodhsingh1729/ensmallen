@@ -27,10 +27,14 @@ GradientDescentType<UpdatePolicyType, DecayPolicyType>::GradientDescentType(
     const double tolerance,
     const UpdatePolicyType& updatePolicy,
     const DecayPolicyType& decayPolicy,
-    const bool resetPolicy)
-    : stepSize(stepSize), maxIterations(maxIterations), tolerance(tolerance),
-      updatePolicy(updatePolicy), decayPolicy(decayPolicy),
-      resetPolicy(resetPolicy), isInitialized(false)
+    const bool resetPolicy) :
+    stepSize(stepSize),
+    maxIterations(maxIterations),
+    tolerance(tolerance),
+    updatePolicy(updatePolicy),
+    decayPolicy(decayPolicy),
+    resetPolicy(resetPolicy),
+    isInitialized(false)
 { /* Nothing to do. */ }
 
 template <typename UpdatePolicyType, typename DecayPolicyType>
@@ -113,18 +117,6 @@ GradientDescentType<UpdatePolicyType, DecayPolicyType>::Optimize(
     terminate |= Callback::EvaluateWithGradient(*this, f, iterate,
         overallObjective, gradient, callbacks...);
 
-    // Use the update policy to take a step.
-    instUpdatePolicy.As<InstUpdatePolicyType>().Update(iterate,
-                                                       stepSize,
-                                                       gradient);
-
-    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
-
-    // Now update the learning rate if requested by the user.
-    instDecayPolicy.As<InstDecayPolicyType>().Update(iterate,
-                                                     stepSize,
-                                                     gradient);
-
     // Output current objective function.
     Info << "Gradient Descent: iteration " << i << ", objective "
         << overallObjective << "." << std::endl;
@@ -148,12 +140,27 @@ GradientDescentType<UpdatePolicyType, DecayPolicyType>::Optimize(
       return overallObjective;
     }
 
+    // Use the update policy to take a step.
+    instUpdatePolicy.As<InstUpdatePolicyType>().Update(iterate,
+                                                       stepSize,
+                                                       gradient);
+
+    terminate |= Callback::StepTaken(*this, f, iterate, callbacks...);
+
+    // Now update the learning rate if requested by the user.
+    instDecayPolicy.As<InstDecayPolicyType>().Update(iterate,
+                                                     stepSize,
+                                                     gradient);
+
     // Reset the counter variables.
     lastObjective = overallObjective;
   }
 
-  Info << "Gradient Descent: maximum iterations (" << maxIterations
-      << ") reached; " << "terminating optimization." << std::endl;
+  if (!terminate)
+  {
+    Info << "Gradient Descent: maximum iterations (" << maxIterations
+        << ") reached; " << "terminating optimization." << std::endl;
+  }
 
   Callback::EndOptimization(*this, f, iterate, callbacks...);
   return overallObjective;

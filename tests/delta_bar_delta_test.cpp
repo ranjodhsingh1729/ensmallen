@@ -1,5 +1,5 @@
 /**
- * @file delta_bar_detla_test.cpp
+ * @file delta_bar_delta_test.cpp
  * @author Ranjodh Singh
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
@@ -14,38 +14,34 @@
 #include <ensmallen.hpp>
 #include "catch.hpp"
 #include "test_function_tools.hpp"
+#include "test_types.hpp"
 
 using namespace ens;
 using namespace ens::test;
 
 TEMPLATE_TEST_CASE("DeltaBarDelta_GDTestFunction", "[DeltaBarDelta]",
-   arma::mat, arma::fmat)
+   ENS_ALL_TEST_TYPES)
 {
-  DeltaBarDelta s(0.01, 500, 1e-9);
-  FunctionTest<GDTestFunction, TestType>(s, 0.1, 0.01);
+  DeltaBarDelta s(0.01, 500, 1e-9, 0.001, 0.2, 0.8);
+  FunctionTest<GDTestFunction, TestType>(s,
+      Tolerances<TestType>::LargeObj,
+      Tolerances<TestType>::LargeCoord);
 }
 
 TEMPLATE_TEST_CASE("DeltaBarDelta_RosenbrockFunction", "[DeltaBarDelta]",
-    arma::mat, arma::fmat)
+    ENS_ALL_TEST_TYPES)
 {
-  DeltaBarDelta s(0.001, 0, 1e-15);
-  FunctionTest<RosenbrockFunction, TestType>(s, 0.01, 0.001);
+  DeltaBarDelta s(0.001, 0, Tolerances<TestType>::Obj / 100,
+      0.0001, 0.2, 0.8);
+  FunctionTest<RosenbrockFunction, TestType>(s,
+      10 * Tolerances<TestType>::LargeObj,
+      10 * Tolerances<TestType>::LargeCoord);
 }
 
-#ifdef ENS_HAVE_COOT
-
-TEMPLATE_TEST_CASE("DeltaBarDelta_GDTestFunction", "[DeltaBarDelta]",
-   coot::mat, coot::fmat)
+TEMPLATE_TEST_CASE("DeltaBarDelta_LogisticRegressionFunction",
+    "[DeltaBarDelta]", ENS_ALL_TEST_TYPES)
 {
-  DeltaBarDelta s(0.01, 500, 1e-9);
-  FunctionTest<GDTestFunction, TestType>(s, 0.1, 0.01);
+  DeltaBarDelta s(0.00032, 32, Tolerances<TestType>::Obj,
+      0.000032, 0.2, 0.8);
+  LogisticRegressionFunctionTest<TestType>(s);
 }
-
-TEMPLATE_TEST_CASE("DeltaBarDelta_RosenbrockFunction", "[DeltaBarDelta]",
-    coot::mat, coot::fmat)
-{
-  DeltaBarDelta s(0.001, 0, 1e-15);
-  FunctionTest<RosenbrockFunction, TestType>(s, 0.01, 0.001);
-}
-
-#endif

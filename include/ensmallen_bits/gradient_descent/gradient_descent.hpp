@@ -12,8 +12,6 @@
 #ifndef ENSMALLEN_GRADIENT_DESCENT_GRADIENT_DESCENT_HPP
 #define ENSMALLEN_GRADIENT_DESCENT_GRADIENT_DESCENT_HPP
 
-#include "update_policies/delta_bar_delta_update.hpp"
-
 namespace ens {
 
 /**
@@ -185,15 +183,36 @@ class GradientDescentType
   //! Modify the tolerance for termination.
   double& Tolerance() { return tolerance; }
 
+  //! Get whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool ResetPolicy() const { return resetPolicy; }
+  //! Modify whether or not the update policy parameters
+  //! are reset before Optimize call.
+  bool& ResetPolicy() { return resetPolicy; }
+
   //! Get the update policy.
   const UpdatePolicyType& UpdatePolicy() const { return updatePolicy; }
   //! Modify the update policy.
   UpdatePolicyType& UpdatePolicy() { return updatePolicy; }
 
+  //! Get the instantiated update policy type.
+  //! Be sure to check its type with Has() before using!
+  const Any& InstUpdatePolicy() const { return instUpdatePolicy; }
+  //! Modify the instantiated update policy type.
+  //! Be sure to check its type with Has() before using!
+  Any& InstUpdatePolicy() { return instUpdatePolicy; }
+
   //! Get the step size decay policy.
   const DecayPolicyType& DecayPolicy() const { return decayPolicy; }
   //! Modify the step size decay policy.
   DecayPolicyType& DecayPolicy() { return decayPolicy; }
+
+  //! Get the instantiated decay policy type.
+  //! Be sure to check its type with Has() before using!
+  const Any& InstDecayPolicy() const { return instDecayPolicy; }
+  //! Modify the instantiated decay policy type.
+  //! Be sure to check its type with Has() before using!
+  Any& InstDecayPolicy() { return instDecayPolicy; }
 
  private:
   //! The step size for each example.
@@ -221,13 +240,12 @@ class GradientDescentType
 
   //! The initialized update policy.
   Any instUpdatePolicy;
+
   //! The initialized decay policy.
   Any instDecayPolicy;
 };
 
 using GradientDescent = GradientDescentType<VanillaUpdate, NoDecay>;
-
-using DeltaBarDelta = GradientDescentType<DeltaBarDeltaUpdate, NoDecay>;
 
 } // namespace ens
 

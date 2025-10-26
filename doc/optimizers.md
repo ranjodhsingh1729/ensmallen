@@ -1263,17 +1263,16 @@ optimizer.Optimize(f, coordinates);
 
 *An optimizer for [differentiable functions](#differentiable-functions).*
 
-A Gradient Descent variant that adapts learning rates for each parameter
-to improve convergence. The rate is increased additively when the current
-gradient's sign is consistent with its exponential moving average, and
-decreased multiplicatively when the signs are opposed.
+A Gradient Descent variant that adapts learning rates for each parameter to improve convergence. If the current gradient and the exponential average of past gradients corresponding to a parameter have the same sign, then the step size for that parameter is incremented by `kappa`. Otherwise, it is decreased by a proportion `phi` of its current value (additive increase, multiplicative decrease).
+
+***Note:*** DeltaBarDelta is very sensitive to its parameters (`kappa` and `phi`) hence a good hyperparameter selection is necessary as its default may not fit every case. Typically, `kappa` should be smaller than the step size.
 
 #### Constructors
 
  * `DeltaBarDelta()`
  * `DeltaBarDelta(`_`stepSize`_`)`
  * `DeltaBarDelta(`_`stepSize, maxIterations, tolerance`_`)`
- * `DeltaBarDelta(`_`stepSize, maxIterations, tolerance, updatePolicy, decayPolicy, resetPolicy`_`)`
+ * `DeltaBarDelta(`_`stepSize, maxIterations, tolerance, kappa, phi, theta, minStepSize, resetPolicy`_`)`
 
 Note that `DeltaBarDelta` is based on the templated type
 `GradientDescentType<`_`UpdatePolicyType, DecayPolicyType`_`>` with _`UpdatePolicyType`_` =
@@ -1283,17 +1282,16 @@ Note that `DeltaBarDelta` is based on the templated type
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `double` | **`stepSize`** | Step size for each iteration. | `0.01` |
+| `double` | **`stepSize`** | Initial step size. | `0.01` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
-| `size_t` | **`tolerance`**  | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
-| `UpdatePolicyType` | **`updatePolicy`** | Instantiated update policy used to adjust the given parameters. | `UpdatePolicyType()` |
-| `DecayPolicyType` | **`decayPolicy`** | Instantiated decay policy used to adjust the step size. | `DecayPolicyType()` |
-| `bool` | **`resetPolicy`** | Flag that determines whether update policy parameters are reset before every Optimize call. | `true` |
+| `double` | **`tolerance`**  | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `double` | **`kappa`** | Additive increase constant for step size when gradient signs persist. | `0.002` |
+| `double` | **`phi`** | Multiplicative decrease factor for step size when gradient signs flip. | `0.2` |
+| `double` | **`theta`** | Decay rate for computing the exponential average of past gradients. | `0.8` |
+| `double` | **`minStepSize`** | Minimum allowed step size for any parameter. | `1e-8` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call. | `true` |
 
-Attributes of the optimizer may also be changed via the member methods
-`StepSize()`, `MaxIterations()`, `Tolerance()`, `UpdatePolicy()`,
-`DecayPolicy()`, and `ResetPolicy()`.
-
+Attributes of the optimizer may be accessed and modified via member functions of the same name.
 
 #### Examples:
 
@@ -1305,7 +1303,7 @@ Attributes of the optimizer may also be changed via the member methods
 RosenbrockFunction f;
 arma::mat coordinates = f.GetInitialPoint();
 
-DeltaBarDelta optimizer(0.001, 0, 1e-15, DeltaBarDeltaUpdate(0.2, 0.8, 0.5, 0.01));
+DeltaBarDelta optimizer(0.001, 0, 1e-15, 0.0001, 0.2, 0.8);
 optimizer.Optimize(f, coordinates);
 ```
 
@@ -1313,8 +1311,9 @@ optimizer.Optimize(f, coordinates);
 
 #### See also:
 
- * [Increased rates of convergence through learning rate adaptation](https://www.academia.edu/download/32005051/Jacobs.NN88.pdf)
+ * [Increased rates of convergence through learning rate adaptation (pdf)](https://www.academia.edu/download/32005051/Jacobs.NN88.pdf)
  * [Differentiable functions](#differentiable-functions)
+ * [Gradient Descent](#gradient-descent)
 
 ## DemonAdam
 
