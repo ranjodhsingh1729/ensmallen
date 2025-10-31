@@ -211,8 +211,8 @@ IQN::Optimize(SeparableFunctionType& functionIn,
 
   if (!terminate)
   {
-      Info << "IQN: maximum iterations (" << maxIterations << ") reached; "
-          << "terminating optimization." << std::endl;
+    Info << "IQN: maximum iterations (" << maxIterations << ") reached; "
+        << "terminating optimization." << std::endl;
   }
 
   Callback::EndOptimization(*this, function, iterate, callbacks...);

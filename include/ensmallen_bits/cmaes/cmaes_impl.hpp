@@ -172,7 +172,7 @@ typename MatType::elem_type CMAES<SelectionPolicyType,
   {
     // To keep track of where we are.
     const size_t idx0 = i % 2;
-    const size_t idx1 = (i+1) % 2;
+    const size_t idx1 = (i + 1) % 2;
 
     // Perform Cholesky decomposition. If the matrix is not positive definite,
     // add a small value and try again.

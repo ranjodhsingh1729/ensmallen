@@ -67,7 +67,7 @@ CD<DescentPolicyType>::Optimize(
   bool terminate = false;
 
   const size_t actualMaxIterations = (maxIterations == 0) ?
-    std::numeric_limits<size_t>::max() : maxIterations;
+      std::numeric_limits<size_t>::max() : maxIterations;
 
   // Start iterating.
   Callback::BeginOptimization(*this, function, iterate, callbacks...);
@@ -126,7 +126,7 @@ CD<DescentPolicyType>::Optimize(
   if (!terminate)
   {
     Info << "CD: maximum iterations (" << maxIterations << ") reached; "
-          << "terminating optimization." << std::endl;
+        << "terminating optimization." << std::endl;
   }
   
   // Calculate and return final objective.  No need to pay attention to the

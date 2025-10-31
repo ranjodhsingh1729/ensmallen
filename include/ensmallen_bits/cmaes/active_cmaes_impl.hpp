@@ -170,7 +170,7 @@ typename MatType::elem_type ActiveCMAES<SelectionPolicyType,
   {
     // To keep track of where we are.
     idx0 = i % 2;
-    idx1 = (i+1) % 2;
+    idx1 = (i + 1) % 2;
 
     // Perform Cholesky decomposition. If the matrix is not positive definite,
     // add a small value and try again.
