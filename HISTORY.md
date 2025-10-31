@@ -1,10 +1,8 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
-* Fix an off-by-one bug where the maximum number of executed iterations was one
-  less than specified `maxIteration` and update the first iteration to start
-  from 0 instead of 1 in the following optimizers: `cd`, `active_cmaes`,
-  `cmaes`, `fasta`, `fbs`, `fista`, `frank_wolfe`, `gradient_descent`, `iqn`,
-  `parallel_sgd`, `sa`.
+ * Fix an off-by-one bug where the actual number of executed iterations was one
+   fewer than the specified `maxIterations`
+   ([#443](https://github.com/mlpack/ensmallen/pull/443)).
 
 ### ensmallen 3.10.0: "Unexpected Rain"
 ###### 2025-09-25
