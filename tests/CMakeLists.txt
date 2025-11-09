@@ -36,6 +36,7 @@ set(ENSMALLEN_TESTS_SOURCES
     lrsdp_test.cpp
     moead_test.cpp
     agemoea_test.cpp
+    momentum_delta_bar_delta_test.cpp
     momentum_sgd_test.cpp
     nesterov_momentum_sgd_test.cpp
     nsga2_test.cpp

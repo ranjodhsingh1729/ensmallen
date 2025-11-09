@@ -1,5 +1,5 @@
 /**
- * @file delta_bar_delta_test.cpp
+ * @file momentum_delta_bar_delta_test.cpp
  * @author Ranjodh Singh
  *
  * ensmallen is free software; you may redistribute it and/or modify it under
@@ -19,29 +19,29 @@
 using namespace ens;
 using namespace ens::test;
 
-TEMPLATE_TEST_CASE("DeltaBarDelta_GDTestFunction", "[DeltaBarDelta]",
-   ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("MomentumDeltaBarDelta_GDTestFunction",
+    "[MomentumDeltaBarDelta]", ENS_ALL_TEST_TYPES)
 {
-  DeltaBarDelta s(0.01, 500, 1e-9, 0.001, 0.2, 0.5);
+  MomentumDeltaBarDelta s(0.01, 500, 1e-9, 0.2, 0.8, 0.5);
   FunctionTest<GDTestFunction, TestType>(s,
       Tolerances<TestType>::LargeObj,
       Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("DeltaBarDelta_RosenbrockFunction", "[DeltaBarDelta]",
-    ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("MomentumDeltaBarDelta_RosenbrockFunction",
+    "[MomentumDeltaBarDelta]", ENS_ALL_TEST_TYPES)
 {
-  DeltaBarDelta s(0.001, 0, Tolerances<TestType>::Obj / 100,
-      0.0001, 0.2, 0.5);
+  MomentumDeltaBarDelta s(0.001, 0, Tolerances<TestType>::Obj / 100,
+    0.2, 0.8, 0.5);
   FunctionTest<RosenbrockFunction, TestType>(s,
       10 * Tolerances<TestType>::LargeObj,
       10 * Tolerances<TestType>::LargeCoord);
 }
 
-TEMPLATE_TEST_CASE("DeltaBarDelta_LogisticRegressionFunction",
-    "[DeltaBarDelta]", ENS_ALL_TEST_TYPES)
+TEMPLATE_TEST_CASE("MomentumDeltaBarDelta_LogisticRegressionFunction",
+    "[MomentumDeltaBarDelta]", ENS_ALL_TEST_TYPES)
 {
-  DeltaBarDelta s(0.00032, 32, Tolerances<TestType>::Obj,
-      0.000032, 0.2, 0.5);
+  MomentumDeltaBarDelta s(0.00032, 32, Tolerances<TestType>::Obj,
+      0.2, 0.8, 0.5);
   LogisticRegressionFunctionTest<TestType>(s);
 }

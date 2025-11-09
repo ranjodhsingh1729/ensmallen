@@ -9,13 +9,13 @@
  * the 3-clause BSD license along with ensmallen.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef ENSMALLEN_GRADIENT_DESCENT_DELTA_BAR_DELTA_UPDATE_HPP
-#define ENSMALLEN_GRADIENT_DESCENT_DELTA_BAR_DELTA_UPDATE_HPP
+#ifndef ENSMALLEN_DELTA_BAR_DELTA_UPDATE_HPP
+#define ENSMALLEN_DELTA_BAR_DELTA_UPDATE_HPP
 
 namespace ens {
 
 /**
- * DeltaBarDelta Update Policy for Gradient Descent.
+ * DeltaBarDelta update policy for Gradient Descent.
  *
  * A heuristic designed to accelerate convergence by
  * adapting the learning rate of each parameter individually.
@@ -55,9 +55,9 @@ class DeltaBarDeltaUpdate
    * Construct the DeltaBarDelta update policy with given parameters.
    *
    * @param initialStepSize Initial Step Size.
-   * @param kappa Constant increment applied when gradient signs persist.
-   * @param phi Proportional decrement factor when gradient signs flip.
-   * @param theta Decay rate for the exponential average (delta-bar).
+   * @param kappa Additive increase constant for step size.
+   * @param phi Multiplicative decrease factor for step size.
+   * @param theta Decay rate for the exponential moving average.
    * @param minStepSize Minimum allowed step size for any parameter
    *     (default: 1e-8).
    */
@@ -148,11 +148,11 @@ class DeltaBarDeltaUpdate
                 const GradType& delta)
     {
       const MatType signMatrix = sign(delta % delta_bar);
-      const MatType sameSignMask = conv_to<MatType>::from(signMatrix == +1);
-      const MatType diffSignMask = conv_to<MatType>::from(signMatrix == -1);
+      const MatType incrementMask = conv_to<MatType>::from(signMatrix == +1);
+      const MatType decrementMask = conv_to<MatType>::from(signMatrix == -1);
 
-      epsilon += sameSignMask * kappa;
-      epsilon -= diffSignMask * phi % epsilon;
+      epsilon += incrementMask * kappa;
+      epsilon -= decrementMask * phi % epsilon;
       epsilon.clamp(minStepSize,
           arma::Datum<typename MatType::elem_type>::inf);
 
@@ -198,4 +198,4 @@ class DeltaBarDeltaUpdate
 
 } // namespace ens
 
-#endif // ENSMALLEN_GRADIENT_DESCENT_DELTA_BAR_DELTA_UPDATE_HPP
+#endif // ENSMALLEN_DELTA_BAR_DELTA_UPDATE_HPP

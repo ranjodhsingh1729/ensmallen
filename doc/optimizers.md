@@ -1274,20 +1274,16 @@ A Gradient Descent variant that adapts learning rates for each parameter to impr
  * `DeltaBarDelta(`_`stepSize, maxIterations, tolerance`_`)`
  * `DeltaBarDelta(`_`stepSize, maxIterations, tolerance, kappa, phi, theta, minStepSize, resetPolicy`_`)`
 
-Note that `DeltaBarDelta` is based on the templated type
-`GradientDescentType<`_`UpdatePolicyType, DecayPolicyType`_`>` with _`UpdatePolicyType`_` =
-`DeltaBarDeltaUpdate` and _`DecayPolicyType`_` = NoDecay`.
-
 #### Attributes
 
 | **type** | **name** | **description** | **default** |
 |----------|----------|-----------------|-------------|
-| `double` | **`stepSize`** | Initial step size. | `0.01` |
+| `double` | **`stepSize`** | Initial step size. | `1.0` |
 | `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
 | `double` | **`tolerance`**  | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
-| `double` | **`kappa`** | Additive increase constant for step size when gradient signs persist. | `0.002` |
+| `double` | **`kappa`** | Additive increase constant for step size when gradient signs persist. | `0.2` |
 | `double` | **`phi`** | Multiplicative decrease factor for step size when gradient signs flip. | `0.2` |
-| `double` | **`theta`** | Decay rate for computing the exponential average of past gradients. | `0.8` |
+| `double` | **`theta`** | Decay rate for computing the exponential average of past gradients. | `0.5` |
 | `double` | **`minStepSize`** | Minimum allowed step size for any parameter. | `1e-8` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call. | `true` |
 
@@ -2459,6 +2455,58 @@ for all Lagrange multipliers and 10 is used as the initial penalty parameter.
  * [A Nonlinear Programming Algorithm for Solving Semidefinite Programs via Low-rank Factorization](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.682.1520&rep=rep1&type=pdf)
  * [Semidefinite programming on Wikipedia](https://en.wikipedia.org/wiki/Semidefinite_programming)
  * [Semidefinite programs](#semidefinite-programs) (includes example usage of `PrimalDualSolver`)
+
+## Momentum DeltaBarDelta
+
+*An optimizer for [differentiable functions](#differentiable-functions).*
+
+A DeltaBarDelta variant that incorporates momentum and other modifications.
+
+***Note***: This is the variant used for optimizing the t-SNE cost function.
+
+#### Constructors
+
+ * `MomentumDeltaBarDelta()`
+ * `MomentumDeltaBarDelta(`_`stepSize`_`)`
+ * `MomentumDeltaBarDelta(`_`stepSize, maxIterations, tolerance`_`)`
+ * `MomentumDeltaBarDelta(`_`stepSize, maxIterations, tolerance, kappa, phi, theta, minStepSize, resetPolicy`_`)`
+
+#### Attributes
+
+| **type** | **name** | **description** | **default** |
+|----------|----------|-----------------|-------------|
+| `double` | **`stepSize`** | Initial step size. | `1.0` |
+| `size_t` | **`maxIterations`** | Maximum number of iterations allowed (0 means no limit). | `100000` |
+| `double` | **`tolerance`**  | Maximum absolute tolerance to terminate algorithm. | `1e-5` |
+| `double` | **`kappa`** | Additive increase constant for step size. | `0.2` |
+| `double` | **`phi`** | Multiplicative decrease factor for step size. | `0.8` |
+| `double` | **`momentum`** | The momentum decay hyperparameter. | `0.5` |
+| `double` | **`minStepSize`** | Minimum allowed step size for any parameter. | `1e-8` |
+| `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call. | `true` |
+
+Attributes of the optimizer may be accessed and modified via member functions of the same name.
+
+#### Examples:
+
+<details open>
+<summary>Click to collapse/expand example code.
+</summary>
+
+```c++
+RosenbrockFunction f;
+arma::mat coordinates = f.GetInitialPoint();
+
+MomentumDeltaBarDelta optimizer(0.001, 0, 1e-15, 0.2, 0.8, 0.5);
+optimizer.Optimize(f, coordinates);
+```
+
+</details>
+
+#### See also:
+ * [t-SNE Implementations](https://lvdmaaten.github.io/tsne/)
+ * [Increased rates of convergence through learning rate adaptation (pdf)](https://www.academia.edu/download/32005051/Jacobs.NN88.pdf)
+ * [Differentiable functions](#differentiable-functions)
+ * [Gradient Descent](#gradient-descent)
 
 ## Momentum SGD
 
