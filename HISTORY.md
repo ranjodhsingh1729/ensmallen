@@ -1,5 +1,8 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
+ * Fix an off-by-one bug where the actual number of executed iterations was one
+   fewer than the specified `maxIterations`
+   ([#443](https://github.com/mlpack/ensmallen/pull/443)).
 
 ### ensmallen 3.10.0: "Unexpected Rain"
 ###### 2025-09-25
