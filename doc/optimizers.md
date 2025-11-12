@@ -2462,14 +2462,14 @@ for all Lagrange multipliers and 10 is used as the initial penalty parameter.
 
 A DeltaBarDelta variant that incorporates momentum and other modifications.
 
-***Note***: This is the variant used for optimizing the t-SNE cost function.
+***Note***: This variant originates from the t-SNE cost function optimization. See the reference below.
 
 #### Constructors
 
  * `MomentumDeltaBarDelta()`
  * `MomentumDeltaBarDelta(`_`stepSize`_`)`
  * `MomentumDeltaBarDelta(`_`stepSize, maxIterations, tolerance`_`)`
- * `MomentumDeltaBarDelta(`_`stepSize, maxIterations, tolerance, kappa, phi, theta, minStepSize, resetPolicy`_`)`
+ * `MomentumDeltaBarDelta(`_`stepSize, maxIterations, tolerance, kappa, phi, momentum, minGain, resetPolicy`_`)`
 
 #### Attributes
 
@@ -2481,7 +2481,7 @@ A DeltaBarDelta variant that incorporates momentum and other modifications.
 | `double` | **`kappa`** | Additive increase constant for step size. | `0.2` |
 | `double` | **`phi`** | Multiplicative decrease factor for step size. | `0.8` |
 | `double` | **`momentum`** | The momentum decay hyperparameter. | `0.5` |
-| `double` | **`minStepSize`** | Minimum allowed step size for any parameter. | `1e-8` |
+| `double` | **`minGain`** | Minimum allowed gain (scaling factor) for any parameter. | `1e-8` |
 | `bool` | **`resetPolicy`** | If true, parameters are reset before every Optimize call. | `true` |
 
 Attributes of the optimizer may be accessed and modified via member functions of the same name.

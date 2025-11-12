@@ -24,12 +24,12 @@ inline MomentumDeltaBarDelta::MomentumDeltaBarDelta(
     const double kappa,
     const double phi,
     const double momentum,
-    const double minStepSize,
+    const double minGain,
     const bool resetPolicy) : 
     optimizer(stepSize,
               maxIterations,
               tolerance,
-              MomentumDeltaBarDeltaUpdate(kappa, phi, momentum, minStepSize),
+              MomentumDeltaBarDeltaUpdate(kappa, phi, momentum, minGain),
               NoDecay(),
               resetPolicy)
 {

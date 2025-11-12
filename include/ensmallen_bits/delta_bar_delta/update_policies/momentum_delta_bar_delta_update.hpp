@@ -42,18 +42,18 @@ class MomentumDeltaBarDeltaUpdate
    * @param kappa Additive increase constant for step size.
    * @param phi Multiplicative decrease factor for step size.
    * @param momentum The momentum decay hyperparameter.
-   * @param minStepSize Minimum allowed step size for any parameter
+   * @param minGain Minimum allowed gain (scaling factor) for any parameter
    *     (default: 1e-8).
    */
   MomentumDeltaBarDeltaUpdate(
       const double kappa = 0.2,
       const double phi = 0.8,
       const double momentum = 0.5,
-      const double minStepSize = 1e-8) :
+      const double minGain = 1e-8) :
       kappa(kappa),
       phi(phi),
       momentum(momentum),
-      minStepSize(minStepSize)
+      minGain(minGain)
   {
     /* Do nothing. */
   }
@@ -73,10 +73,10 @@ class MomentumDeltaBarDeltaUpdate
   //! Modify the momentum hyperparameter.
   double& Momentum() { return momentum; }
 
-  //! Access the minStepSize hyperparameter.
-  double MinStepSize() const { return minStepSize; }
-  //! Modify the minStepSize hyperparameter.
-  double& MinStepSize() { return minStepSize; }
+  //! Access the minGain hyperparameter.
+  double MinGain() const { return minGain; }
+  //! Modify the minGain hyperparameter.
+  double& MinGain() { return minGain; }
 
   /**
    * The UpdatePolicyType policy classes must contain an internal 'Policy'
@@ -106,7 +106,7 @@ class MomentumDeltaBarDeltaUpdate
         kappa(ElemType(parent.kappa)),
         phi(ElemType(parent.phi)),
         momentum(ElemType(parent.momentum)),
-        minStepSize(ElemType(parent.minStepSize))
+        minGain(ElemType(parent.minGain))
     {
       gains.ones(rows, cols);
       velocity.zeros(rows, cols);
@@ -128,11 +128,7 @@ class MomentumDeltaBarDeltaUpdate
 
       gains += (1 - mask) * kappa;
       gains -= mask * (1 - phi) % gains;
-
-      // stepSize * gains >= minStepSize
-      // gains >= minStepSize / stepSize
-      gains.clamp((double) minStepSize / stepSize,
-          arma::Datum<typename MatType::elem_type>::inf);
+      gains.clamp(minGain, arma::Datum<typename MatType::elem_type>::inf);
 
       velocity *= momentum;
       velocity -= (stepSize * gains) % gradient;
@@ -154,7 +150,7 @@ class MomentumDeltaBarDeltaUpdate
     ElemType kappa;
     ElemType phi;
     ElemType momentum;
-    ElemType minStepSize;
+    ElemType minGain;
   };
 
  private:
@@ -167,8 +163,8 @@ class MomentumDeltaBarDeltaUpdate
   //! The momentum hyperparameter.
   double momentum;
 
-  //! The minStepSize hyperparameter.
-  double minStepSize;
+  //! The minGain hyperparameter.
+  double minGain;
 };
 
 } // namespace ens

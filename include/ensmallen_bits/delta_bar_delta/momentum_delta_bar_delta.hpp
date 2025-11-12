@@ -50,7 +50,7 @@ class MomentumDeltaBarDelta
    * @param kappa Additive increase constant for step size.
    * @param phi Multiplicative decrease factor for step size.
    * @param momentum The momentum decay hyperparameter.
-   * @param minStepSize Minimum allowed step size for any parameter
+   * @param minGain Minimum allowed gain (scaling factor) for any parameter
    *     (default: 1e-8).
    * @param resetPolicy If true, parameters are reset before every Optimize
    *     call; otherwise, their values are retained.
@@ -61,7 +61,7 @@ class MomentumDeltaBarDelta
                 const double kappa = 0.2,
                 const double phi = 0.8,
                 const double momentum = 0.5,
-                const double minStepSize = 1e-8,
+                const double minGain = 1e-8,
                 const bool resetPolicy = true);
 
   /**
@@ -131,10 +131,10 @@ class MomentumDeltaBarDelta
   //! Modify the momentum decay hyperparameter.
   double& Momentum() { return optimizer.UpdatePolicy().Momentum(); }
 
-  //! Get the minimum allowed step size for any parameter.
-  double MinStepSize() const { return optimizer.UpdatePolicy().MinStepSize(); }
-  //! Modify the minimum allowed step size for any parameter.
-  double& MinStepSize() { return optimizer.UpdatePolicy().MinStepSize(); }
+  //! Get the minimum allowed gain (scaling factor) for any parameter.
+  double MinGain() const { return optimizer.UpdatePolicy().MinGain(); }
+  //! Modify the minimum allowed gain (scaling factor) for any parameter.
+  double& MinGain() { return optimizer.UpdatePolicy().MinGain(); }
 
   //! Get the tolerance for termination.
   double Tolerance() const { return optimizer.Tolerance(); }
