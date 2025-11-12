@@ -1,11 +1,12 @@
 ### ensmallen ?.??.?: "???"
 ###### ????-??-??
-* Refactor `GradientDescent` into
-  `GradientDescentType<UpdatePolicyType, DecayPolicyType>`.
-  Add the `DeltaBarDelta` optimizer, which implements Jacob's delta-bar-delta
-  update through `GradientDescentType` with `DeltaBarDeltaUpdate` and `NoDecay`
-  policies. ([#440](https://github.com/mlpack/ensmallen/pull/440))
-  See the documentation for more details.
+ * Refactor `GradientDescent` into
+   `GradientDescentType<UpdatePolicyType, DecayPolicyType>` and
+   add the `DeltaBarDelta` and `MomentumDeltaBarDelta` optimizers
+   ([#440](https://github.com/mlpack/ensmallen/pull/440)).
+ * Fix an off-by-one bug where the actual number of executed iterations was one
+   fewer than the specified `maxIterations`
+   ([#443](https://github.com/mlpack/ensmallen/pull/443)).
 
 ### ensmallen 3.10.0: "Unexpected Rain"
 ###### 2025-09-25
