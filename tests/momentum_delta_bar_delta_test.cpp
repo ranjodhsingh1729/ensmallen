@@ -22,7 +22,7 @@ using namespace ens::test;
 TEMPLATE_TEST_CASE("MomentumDeltaBarDelta_GDTestFunction",
     "[MomentumDeltaBarDelta]", ENS_ALL_TEST_TYPES)
 {
-  MomentumDeltaBarDelta s(0.01, 500, 1e-9, 0.2, 0.8, 0.5);
+  MomentumDeltaBarDelta s(0.9, 20, 1e-9, 0.2, 0.8, 0.5);
   FunctionTest<GDTestFunction, TestType>(s,
       Tolerances<TestType>::LargeObj,
       Tolerances<TestType>::LargeCoord);
@@ -41,7 +41,7 @@ TEMPLATE_TEST_CASE("MomentumDeltaBarDelta_RosenbrockFunction",
 TEMPLATE_TEST_CASE("MomentumDeltaBarDelta_LogisticRegressionFunction",
     "[MomentumDeltaBarDelta]", ENS_ALL_TEST_TYPES)
 {
-  MomentumDeltaBarDelta s(0.00032, 32, Tolerances<TestType>::Obj,
+  MomentumDeltaBarDelta s(0.0004, 20, Tolerances<TestType>::Obj,
       0.2, 0.8, 0.5);
   LogisticRegressionFunctionTest<TestType>(s);
 }

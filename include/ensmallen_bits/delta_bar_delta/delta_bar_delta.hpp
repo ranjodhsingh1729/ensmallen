@@ -13,7 +13,7 @@
 #define ENSMALLEN_DELTA_BAR_DELTA_HPP
 
 #include <ensmallen_bits/gradient_descent/gradient_descent.hpp>
-#include "./update_policies/delta_bar_delta_update.hpp"
+#include "update_policies/delta_bar_delta_update.hpp"
 
 namespace ens {
 
@@ -42,7 +42,8 @@ namespace ens {
  * @article{jacobs1988increased,
  *   title     = {Increased Rates of Convergence Through Learning Rate
  *                Adaptation},
- *   author    = {Jacobs, Robert A.}, journal = {Neural Networks},
+ *   author    = {Jacobs, Robert A.},
+ *   journal   = {Neural Networks},
  *   volume    = {1},
  *   number    = {4},
  *   pages     = {295--307},

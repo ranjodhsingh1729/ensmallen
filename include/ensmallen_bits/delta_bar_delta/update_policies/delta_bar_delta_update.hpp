@@ -39,7 +39,8 @@ namespace ens {
  * @article{jacobs1988increased,
  *   title     = {Increased Rates of Convergence Through Learning Rate
  *                Adaptation},
- *   author    = {Jacobs, Robert A.}, journal = {Neural Networks},
+ *   author    = {Jacobs, Robert A.},
+ *   journal   = {Neural Networks},
  *   volume    = {1},
  *   number    = {4},
  *   pages     = {295--307},
@@ -131,7 +132,7 @@ class DeltaBarDeltaUpdate
         theta(ElemType(parent.theta)),
         minStepSize(ElemType(parent.minStepSize))
     {
-      delta_bar.zeros(rows, cols);
+      deltaBar.zeros(rows, cols);
       epsilon.set_size(rows, cols);
       epsilon.fill(parent.InitialStepSize());
     }
@@ -147,18 +148,14 @@ class DeltaBarDeltaUpdate
                 const double stepSize,
                 const GradType& delta)
     {
-      const MatType signMatrix = sign(delta % delta_bar);
-      const MatType incrementMask = conv_to<MatType>::from(signMatrix == +1);
-      const MatType decrementMask = conv_to<MatType>::from(signMatrix == -1);
+      const MatType signMatrix = sign(delta % deltaBar);
 
-      epsilon += incrementMask * kappa;
-      epsilon -= decrementMask * phi % epsilon;
+      epsilon += (signMatrix == +1) * kappa -
+          (signMatrix == -1) * phi % epsilon;
       epsilon.clamp(minStepSize,
           arma::Datum<typename MatType::elem_type>::inf);
 
-      delta_bar *= theta;
-      delta_bar += (1 - theta) * delta;
-
+      deltaBar = theta * deltaBar + (1 - theta) * delta;
       iterate -= epsilon % delta;
     }
 
@@ -167,7 +164,7 @@ class DeltaBarDeltaUpdate
     const DeltaBarDeltaUpdate& parent;
 
     //! The exponential average of past gradients.
-    MatType delta_bar;
+    MatType deltaBar;
     
     //! Tracks the current step size for each parameter.
     MatType epsilon;

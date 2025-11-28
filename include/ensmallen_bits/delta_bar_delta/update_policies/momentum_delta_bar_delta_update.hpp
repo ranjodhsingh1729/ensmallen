@@ -16,15 +16,25 @@ namespace ens {
 
 /**
  * MomentumDeltaBarDelta update policy for Gradient Descent.
- * 
- * A DeltaBarDelta variant that incorporates momentum and other modifications.
- * Note: This is the variant used for optimizing the t-SNE cost function.
+ *
+ * A DeltaBarDelta variant that incorporates the following modifications:
+ *  - In the original DeltaBarDelta, the momentum term (delta_bar) is used
+ *    solely for sign comparison with the current gradient and does not
+ *    participate in the parameter update. In this modified variant, the
+ *    momentum term (velocity) is directly used to update the parameters.
+ *  - Instead of adjusting the step size directly, each parameter maintains
+ *    a gain value initialized to 1.0. Updates apply additive increases or
+ *    multiplicative decreases to this gain. The effective step size for a
+ *    parameter is the product of its initial step size and its current gain.
+ *
+ * Note: This variant originates from optimization of the t-SNE cost function.
  *
  * @code
  * @article{jacobs1988increased,
  *   title     = {Increased Rates of Convergence Through Learning Rate
  *                Adaptation},
- *   author    = {Jacobs, Robert A.}, journal = {Neural Networks},
+ *   author    = {Jacobs, Robert A.},
+ *   journal   = {Neural Networks},
  *   volume    = {1},
  *   number    = {4},
  *   pages     = {295--307},
@@ -123,16 +133,11 @@ class MomentumDeltaBarDeltaUpdate
                 const double stepSize,
                 const GradType& gradient)
     {
-      const MatType mask = conv_to<MatType>::from(
-          sign(gradient) == sign(velocity));
-
-      gains += (1 - mask) * kappa;
-      gains -= mask * (1 - phi) % gains;
+      gains += (sign(gradient) != sign(velocity)) * kappa -
+          (sign(gradient) == sign(velocity)) * (1 - phi) % gains;
       gains.clamp(minGain, arma::Datum<typename MatType::elem_type>::inf);
 
-      velocity *= momentum;
-      velocity -= (stepSize * gains) % gradient;
-
+      velocity = momentum * velocity - (stepSize * gains) % gradient;
       iterate += velocity;
     }
 

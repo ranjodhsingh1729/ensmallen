@@ -13,21 +13,43 @@
 #define ENSMALLEN_MOMENTUM_DELTA_BAR_DELTA_HPP
 
 #include <ensmallen_bits/gradient_descent/gradient_descent.hpp>
-#include "./update_policies/momentum_delta_bar_delta_update.hpp"
+#include "update_policies/momentum_delta_bar_delta_update.hpp"
 
 namespace ens {
 
 /**
  * MomentumDeltaBarDelta Optimizer.
  *
- * A DeltaBarDelta variant that incorporates momentum and other modifications.
- * Note: This is the variant used for optimizing the t-SNE cost function.
+ * A DeltaBarDelta variant that incorporates the following modifications:
+ *  - In the original DeltaBarDelta, the momentum term (delta_bar) is used
+ *    solely for sign comparison with the current gradient and does not
+ *    participate in the parameter update. In this modified variant, the
+ *    momentum term (velocity) is directly used to update the parameters.
+ *  - Instead of adjusting the step size directly, each parameter maintains
+ *    a gain value initialized to 1.0. Updates apply additive increases or
+ *    multiplicative decreases to this gain. The effective step size for a
+ *    parameter is the product of its initial step size and its current gain.
+ *
+ * Note: This variant originates from optimization of the t-SNE cost function.
+ *
+ * @code
+ * @article{maaten2008visualizing,
+ *   title={Visualizing data using t-SNE},
+ *   author={van der Maaten, Laurens and Hinton, Geoffrey},
+ *   journal={Journal of machine learning research},
+ *   volume={9},
+ *   pages={2579--2605},
+ *   month={11},
+ *   year={2008}
+ * }
+ * @endcode
  *
  * @code
  * @article{jacobs1988increased,
  *   title     = {Increased Rates of Convergence Through Learning Rate
  *                Adaptation},
- *   author    = {Jacobs, Robert A.}, journal = {Neural Networks},
+ *   author    = {Jacobs, Robert A.},
+ *   journal   = {Neural Networks},
  *   volume    = {1},
  *   number    = {4},
  *   pages     = {295--307},
@@ -56,13 +78,13 @@ class MomentumDeltaBarDelta
    *     call; otherwise, their values are retained.
    */
   MomentumDeltaBarDelta(const double stepSize = 1.0,
-                const size_t maxIterations = 100000,
-                const double tolerance = 1e-5,
-                const double kappa = 0.2,
-                const double phi = 0.8,
-                const double momentum = 0.5,
-                const double minGain = 1e-8,
-                const bool resetPolicy = true);
+                        const size_t maxIterations = 100000,
+                        const double tolerance = 1e-5,
+                        const double kappa = 0.2,
+                        const double phi = 0.8,
+                        const double momentum = 0.5,
+                        const double minGain = 1e-8,
+                        const bool resetPolicy = true);
 
   /**
    * Optimize the given function using MomentumDeltaBarDelta.
