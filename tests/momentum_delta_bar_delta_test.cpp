@@ -22,7 +22,7 @@ using namespace ens::test;
 TEMPLATE_TEST_CASE("MomentumDeltaBarDelta_GDTestFunction",
     "[MomentumDeltaBarDelta]", ENS_ALL_TEST_TYPES)
 {
-  MomentumDeltaBarDelta s(0.9, 20, 1e-9, 0.2, 0.8, 0.5);
+  MomentumDeltaBarDelta s(0.9, 50, 1e-9, 0.2, 0.8, 0.5);
   FunctionTest<GDTestFunction, TestType>(s,
       Tolerances<TestType>::LargeObj,
       Tolerances<TestType>::LargeCoord);
